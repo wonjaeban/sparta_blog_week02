@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>회원가입 페이지</title>
+    <style>
+        .warning {
+            color: red;
+            font-size: 10px;
+            display: none;
+        }
+        .hide {
+            display: none;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            if ($('#username').text() != "") {
+                alert("이미 로그인이 되어있습니다!")
+                location.href="/index"
+            }
+        })
+
+        function finish() {
+
+            let username = $('#user-input').val();
+            let pw = $('#pw').val();
+            let rePw = $('#rePw').val();
+
+
+            if ($("#countNumber").css('display') == 'block' || $("#checkId").css('display') == 'block' ||
+                $("#countNumbers").css('display') == 'block' || $("#checkPw").css('display') == 'block' ||
+                $("#checkRePw").css('display') == 'block' || username == "" || pw == "" || rePw == "") {
+                alert("정보를 제대로 입력해주세요!");
+                return false;
+
+            }
+            else {
+                return true;
+            }
+        }
+
+        function countNumber() {
+            $('#countNumber').hide();
+            $('#checkId').hide();
+            let pattern = /[^A-Za-z0-9]/;
+            if ($('#user-input').val().length < 3) {
+                $('#countNumber').show();
+            } else if (pattern.test($('#user-input').val())) {
+                $('#checkId').show();
+            }
+        }
+
+        function countNumbers() {
+            $('#countNumbers').hide();
+            $('#checkPw').hide();
+            let pattern = $('#user-input').val();
+            if ($('#pw').val().length < 4) {
+                $('#countNumbers').show();
+            } else if ($('#pw').val().indexOf(pattern) != -1) {
+                $('#checkPw').show();
+            }
+        }
+
+        function checkRePw() {
+            $('#checkRePw').hide();
+            if ($('#rePw').val() != $('#pw').val()) {
+                $('#checkRePw').show();
+            }
+        }
+
+    </script>
+</head>
+<body>
+<div id="login-form">
+    <div id="login-title">Sign up Select Shop</div>
+
+    <form action="/signup" method="post" onsubmit="return finish();">
+        <div class="login-id-label">Username</div>
+        <input type="text" name="username" class="login-input-box" id="user-input" onblur="countNumber()">
+        <div class="warning" id="countNumber">3자 이상 입력하세요</div>
+        <div class="warning" id="checkId">알파벳 대소문자(a~z, A~Z), 숫자(0~9)로만 구성해야합니다</div>
+
+
+        <div class="login-id-label">Password</div>
+        <input type="password" name="password" class="login-input-box" id="pw" onblur="countNumbers()">
+        <div class="warning" id="countNumbers">4자 이상 입력하세요</div>
+        <div class="warning" id="checkPw">닉네임과 같은 값을 포함할 수 없습니다</div>
+
+        <div class="login-id-label">Reconfirm Password</div>
+        <input type="password" name="ReconfirmPassword"  class="login-input-box" id="rePw" onblur="checkRePw()">
+        <div class="warning" id="checkRePw">비밀번호를 정확히 입력해주세요</div>
+        <span th:text="${username}" id="username" class="hide"></span>
+        <button id="login-id-submit">회원 가입</button>
+    </form>
+    <div id="login-failed" style="display:none" class="alert alert-danger" role="alert">아이디가 중복됩니다.</div>
+
+</div>
+</body>
+<script>
+    const temp = location.href;
+    const queryString = temp.substring(temp.indexOf("?")+1)
+    if (queryString === 'error') {
+        const errorDiv = document.getElementById('login-failed');
+        errorDiv.style.display = 'block';
+    }
+</script>
+</html>

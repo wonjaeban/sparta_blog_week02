@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>항해블로그</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <style>
+        .title {
+            font-weight: bold;
+            font-size: 30px;
+        }
+
+        .contents{
+            font-size: 20px;
+        }
+
+        .header {
+            width: 1270px;
+            height: 150px;
+            background-color: #339af0;
+        }
+
+        .name {
+            font-size: 50px;
+            color: aliceblue;
+            width: 250px;
+            margin: auto;
+            padding-top: 30px;
+
+        }
+
+        .wrap {
+            margin-left: 150px;
+            width: 1250px;
+        }
+
+        .username {
+            margin-top: 10px;
+        }
+
+        .buttons{
+            display: block;
+            margin:auto;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .button {
+            display: block;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-left: 900px;
+        }
+
+        .field {
+            display: block;
+            margin: auto;
+        }
+
+        .wrap2 {
+            margin-top: 300px;
+        }
+
+        .fixField {
+            display: none;
+        }
+        .fixDone {
+            display: none;
+        }
+        .userName {
+            display: none;
+        }
+
+        A:link {text-decoration: none; color: aliceblue;}
+        A:visited {text-decoration: none; color: aliceblue;}
+        A:active {text-decoration: none; color: aliceblue;}
+        A:hover {text-decoration: none; color: aliceblue;}
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            try {
+                let temp = location.href.split("?")
+                let idInput = temp[1].split('=')[1]
+            } catch (err) {
+                alert("잘못된 접근입니다!")
+                location.href="/"
+            }
+
+            getMessages();
+            getReplies();
+        })
+
+        function getMessages() {
+            let temp = location.href.split("?")
+            let idInput = temp[1].split('=')[1]
+
+
+            $.ajax({
+                type: "GET",
+                url: "/api/lookup",
+                data: {"id" : idInput},
+                success: function (response) {
+                        let title = response.title;
+                        let username = response.username;
+                        let contents = response.contents;
+                        let createdAt = response.createdAt;
+                        addHTML(title, username, createdAt, contents);
+                }
+            });
+        }
+
+        function getReplies() {
+            let temp = location.href.split("?")
+            let idInput = temp[1].split('=')[1]
+
+            $.ajax({
+                type: "GET",
+                url: "/api/lookup/reply",
+                data: {"id" : idInput},
+                success: function (response) {
+                    console.log(response)
+                    for (let i = 0; i < response.length; i++) {
+                        let id = response[i].id;
+                        let username = response[i].username;
+                        let contents = response[i].contents;
+                        let createdAt = response[i].createdAt;
+                        addReply(id, username, createdAt, contents);
+                    }
+                }
+            });
+
+        }
+
+        function addReply(id, username, createdAt, contents) {
+            let tempHtml = makeMessage2(id, username, createdAt, contents);
+            $('#wrap2').append(tempHtml);
+        }
+
+        function addHTML(title, username, createdAt, contents) {
+            let tempHtml = makeMessage(title, username, createdAt, contents);
+            $('#wrap').append(tempHtml);
+        }
+
+        function makeMessage2(id, username, createdAt, contents) {
+            let user = $('#username').text();
+
+            if(user != username) {
+                return `<hr>
+                    <div class="username">
+                        ${username} | ${createdAt}
+                    </div>
+                    <hr>
+                    <div class="contents">
+                        ${contents}
+                    </div>
+                    <hr>`;
+            }
+            else {
+                return `<hr>
+                    <div class="username">
+                        ${username} | ${createdAt}
+                    </div>
+                    <hr>
+                    <div class="contents" id="contents">
+                        ${contents}
+                    </div>
+                    <div>
+                        <textarea class="fixField" placeholder="댓글을 입력해주세요" name="reply" id="fixReply" cols="20" rows="5"></textarea>
+                    </div>
+                    <button onclick="fixDone('${id}')" id="fixDone" class="fixDone">수정완료</button>
+                    <button onclick="fixing('${contents}')" id="fixing">수정</button>
+                    <button onclick="deleting('${id}')" id="deleting">삭제</button>
+                    <hr>`;
+            }
+        }
+
+        function makeMessage(title, username, createdAt, contents) {
+            return `<span class="title">${title}</span>
+                    <div class="username">
+                        ${username} | ${createdAt}
+                    </div>
+                    <hr>
+                    <div class="contents">
+                        ${contents}
+                    </div>
+                    <hr>`;
+        }
+
+        function fixing(contents) {
+            $('#contents').hide()
+            $('#deleting').hide()
+            $('#fixing').hide()
+            $('#fixReply').show()
+            $('#fixReply').text(contents)
+            $('#fixDone').show()
+        }
+        function fixDone(id) {
+            let fixReply = $('#fixReply').val()
+            if (fixReply == "") {
+                alert("댓글을 작성해주세요!")
+            }
+            else {
+                let temp = location.href.split("?")
+                let user = $('#username').text();
+                let idInput = temp[1].split('=')[1]
+
+                let data = {'idGiven': id, 'contents': fixReply, 'username': user, 'idInput': idInput}
+                $.ajax({
+                    type: "POST",
+                    url: "/api/replies/fixing",
+                    contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        alert('댓글이 성공적으로 작성되었습니다.');
+                        window.location.reload();
+                    }
+                });
+            }
+        }
+
+        function deleting(id) {
+            if (confirm("정말 삭제하시겠습니까?") == false) {
+                return
+            }
+            let data = {'idGiven': id};
+            $.ajax({
+                type: "POST",
+                url: "/api/replies/deleting",
+                contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('댓글이 성공적으로 삭제되었습니다.');
+                    window.location.reload();
+                }
+            });
+
+        }
+
+        function replies() {
+            let temp = location.href.split("?")
+            let idInput = temp[1].split('=')[1]
+            let username = $('#username').text();
+            let contents = $('#reply').val()
+
+            if (username == "") {
+                alert("로그인을 해주세요!")
+                location.href= "/login";
+            }
+
+            else if (contents == "") {
+                alert("댓글 내용을 입력해주세요!")
+            }
+            else {
+                let data = {'contents': contents, 'username': username, 'idInput': idInput}
+                $.ajax({
+                    type: "POST",
+                    url: "/api/replies",
+                    contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                    data: JSON.stringify(data),
+                    success: function (response) {
+                        alert('댓글이 성공적으로 작성되었습니다.');
+                        window.location.reload();
+                    }
+                });
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h2 class="name"><a href="/">항해블로그</a></h2>
+    </div>
+    <div id="wrap" class="wrap">
+    </div>
+    <textarea class="field" placeholder="댓글을 입력해주세요" name="reply" id="reply" cols="100" rows="5"></textarea>
+
+    <button class="button" onclick="replies()">댓글 작성하기</button>
+    <div id="wrap2" class="wrap wrap2">
+    </div>
+    <span th:text="${username}" id="username" class="userName"></span>
+
+
+    <button class="buttons" onclick="home()">home</button>
+
+</body>
+</html>

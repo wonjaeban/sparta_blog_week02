@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>항해블로그</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
+    <script>
+        $(document).ready(function () {
+            getMessages();
+        })
+
+        function getMessages() {
+            $.ajax({
+                type: "GET",
+                url: "/api/memos",
+                data: {},
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        let message = response[i];
+                        let id = message.id;
+                        let title = message.title;
+                        let username = message.username;
+                        let createdAt = message.createdAt;
+                        addHTML(id, title, username, createdAt);
+                    }
+                }
+            });
+        }
+
+        function addHTML(id, title, username, createdAt) {
+            let tempHtml = makeMessage(id, title, username, createdAt);
+            $('#cards-box').append(tempHtml);
+        }
+
+        function makeMessage(id, title, username, createdAt) {
+            return `<a onclick="lookup('${id}')" class="list-group-item list-group-item-action">
+                        ${title}<span class="username">${username} | ${createdAt}</span>
+                    </a>`;
+        }
+        function login(){
+            location.href= "/login";
+        }
+        function lookup(id) {
+            location.href= "/lookup2?idInput=" + id;
+        }
+
+        function signup(){
+            location.href= "/signup";
+        }
+
+    </script>
+
+    <style>
+
+        .header {
+            width: 1270px;
+            height: 150px;
+            background-color: #339af0;
+        }
+
+        .name {
+            font-size: 50px;
+            color: aliceblue;
+            width: 250px;
+            margin: auto;
+            padding-top: 30px;
+
+        }
+
+        .upload {
+            width: 150px;
+            margin-left: 1400px;
+        }
+
+        .username {
+            float: right;
+        }
+
+        .buttons {
+            border-radius: 5px;
+        }
+
+        A:link {text-decoration: none; color: aliceblue;}
+        A:visited {text-decoration: none; color: aliceblue;}
+        A:active {text-decoration: none; color: aliceblue;}
+        A:hover {text-decoration: none; color: aliceblue;}
+
+
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h2 class="name"><a href="/">항해블로그</a></h2>
+        <div class="upload">
+            <button class="buttons" onclick="login()">로그인</button>
+            <button class="buttons" onclick="signup()">회원가입</button>
+        </div>
+    </div>
+        <div class="list-group" id="cards-box">
+        </div>
+</body>
+
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>항해블로그</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Lora&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <style>
+
+        .header {
+            width: 1270px;
+            height: 150px;
+            background-color: #339af0;
+        }
+
+        .name {
+            font-size: 50px;
+            color: aliceblue;
+            width: 250px;
+            margin: auto;
+            padding-top: 30px;
+
+        }
+
+        .describe {
+            width: 350px;
+            height: 400px;
+        }
+
+        .input-group {
+            width: 500px;
+            margin: auto;
+
+        }
+
+        .enrollment {
+            width: 80px;
+            margin: auto;
+            margin-top: 30px;
+        }
+        .hide {
+            display: none;
+        }
+
+
+
+
+
+        A:link {text-decoration: none; color: aliceblue;}
+        A:visited {text-decoration: none; color: aliceblue;}
+        A:active {text-decoration: none; color: aliceblue;}
+        A:hover {text-decoration: none; color: aliceblue;}
+
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            if ($('#username').text() == "") {
+                alert("로그인이 필요합니다!")
+                location.href="/login"
+            }
+        })
+        function upload() {
+            let username = $('#username').text();
+
+            let title = $('#title').val()
+            let contents = $('#contents').val()
+            let data = {'title': title, 'contents': contents, 'username': username}
+
+            $.ajax({
+                type: "POST",
+                url: "/api/memos",
+                contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('메시지가 성공적으로 작성되었습니다.');
+                    location.href="/index";
+                }
+            });
+
+        }
+
+
+    </script>
+</head>
+<body>
+<div class="header">
+    <h2 class="name"><a href="/">항해블로그</a></h2>
+    <div class="upload">
+    </div>
+</div>
+
+<hr>
+<div class="input-group">
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="">제목</span>
+        </div>
+        <input type="text" id="title" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+    </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-default">내용</span>
+        </div>
+        <input type="text" id="contents" class="form-control describe" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+    </div>
+</div>
+<span th:text="${username}" id="username" class="hide"></span>
+<div class="enrollment">
+    <button type="button" onclick="upload()"><a>글쓰기</a></button>
+</div>
+</body>
+</html>
