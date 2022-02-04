@@ -53,16 +53,30 @@ public class UserController {
 
     // 회원 가입 요청 처리
     @PostMapping("/signup")
-    public String registerUser(Model model, SignupRequestDto requestDto) {
+    public String registerUser(SignupRequestDto requestDto) {
 
-        boolean TorF = userService.registerUser(requestDto);
-        if (TorF == false) {
-            return "redirect:/login";
+        String checking = userService.registerUser(requestDto);
+        if (checking.equals("true1")) {
+            return "redirect:/signup?doubleId";
+        }
+        else if (checking.equals("true2")) {
+            return "redirect:/signup?countNumber";
+        }
+        else if (checking.equals("true3")) {
+            return "redirect:/signup?checkId";
+        }
+        else if (checking.equals("true4")) {
+            return "redirect:/signup?countNumbers";
+        }
+        else if (checking.equals("true5")) {
+            return "redirect:/signup?checkPw";
+        }
+        else if (checking.equals("true6")) {
+            return "redirect:/signup?checkRePw";
         }
         else {
-            return "redirect:/signup?error";
+            return "redirect:/login";
         }
-
     }
 
     @GetMapping("/user/kakao/callback")

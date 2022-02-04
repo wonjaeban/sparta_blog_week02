@@ -37,69 +37,23 @@
             }
         })
 
-        function finish() {
-
-            let username = $('#user-input').val();
-            let pw = $('#pw').val();
-            let rePw = $('#rePw').val();
-
-
-            if ($("#countNumber").css('display') == 'block' || $("#checkId").css('display') == 'block' ||
-                $("#countNumbers").css('display') == 'block' || $("#checkPw").css('display') == 'block' ||
-                $("#checkRePw").css('display') == 'block' || username == "" || pw == "" || rePw == "") {
-                alert("정보를 제대로 입력해주세요!");
-                return false;
-
-            }
-            else {
-                return true;
-            }
-        }
-
-        function countNumber() {
-            $('#countNumber').hide();
-            $('#checkId').hide();
-            let pattern = /[^A-Za-z0-9]/;
-            if ($('#user-input').val().length < 3) {
-                $('#countNumber').show();
-            } else if (pattern.test($('#user-input').val())) {
-                $('#checkId').show();
-            }
-        }
-
-        function countNumbers() {
-            $('#countNumbers').hide();
-            $('#checkPw').hide();
-            let pattern = $('#user-input').val();
-            if ($('#pw').val().length < 4) {
-                $('#countNumbers').show();
-            } else if ($('#pw').val().indexOf(pattern) != -1) {
-                $('#checkPw').show();
-            }
-        }
-
-        function checkRePw() {
-            $('#checkRePw').hide();
-            if ($('#rePw').val() != $('#pw').val()) {
-                $('#checkRePw').show();
-            }
-        }
-
     </script>
 </head>
 <body>
 <div id="login-form">
-    <div id="login-title">Sign up Select Shop</div>
+    <div id="login-title">Sign up myblog</div>
 
-    <form action="/signup" method="post" onsubmit="return finish();">
+    <form action="/signup" method="post">
         <div class="login-id-label">Username</div>
         <input type="text" name="username" class="login-input-box" id="user-input" onblur="countNumber()">
+        <div class="warning" id="doubleId">아이디가 중복됩니다.</div>
         <div class="warning" id="countNumber">3자 이상 입력하세요</div>
         <div class="warning" id="checkId">알파벳 대소문자(a~z, A~Z), 숫자(0~9)로만 구성해야합니다</div>
 
 
         <div class="login-id-label">Password</div>
         <input type="password" name="password" class="login-input-box" id="pw" onblur="countNumbers()">
+
         <div class="warning" id="countNumbers">4자 이상 입력하세요</div>
         <div class="warning" id="checkPw">닉네임과 같은 값을 포함할 수 없습니다</div>
 
@@ -109,15 +63,35 @@
         <span th:text="${username}" id="username" class="hide"></span>
         <button id="login-id-submit">회원 가입</button>
     </form>
-    <div id="login-failed" style="display:none" class="alert alert-danger" role="alert">아이디가 중복됩니다.</div>
+
 
 </div>
 </body>
 <script>
     const temp = location.href;
     const queryString = temp.substring(temp.indexOf("?")+1)
-    if (queryString === 'error') {
-        const errorDiv = document.getElementById('login-failed');
+    if (queryString === 'doubleId') {
+        const errorDiv = document.getElementById('doubleId');
+        errorDiv.style.display = 'block';
+    }
+    else if (queryString === 'countNumber') {
+        const errorDiv = document.getElementById('countNumber');
+        errorDiv.style.display = 'block';
+    }
+    else if (queryString === 'checkId') {
+        const errorDiv = document.getElementById('checkId');
+        errorDiv.style.display = 'block';
+    }
+    else if (queryString === 'countNumbers') {
+        const errorDiv = document.getElementById('countNumbers');
+        errorDiv.style.display = 'block';
+    }
+    else if (queryString === 'checkPw') {
+        const errorDiv = document.getElementById('checkPw');
+        errorDiv.style.display = 'block';
+    }
+    else if (queryString === 'checkRePw') {
+        const errorDiv = document.getElementById('checkRePw');
         errorDiv.style.display = 'block';
     }
 </script>
