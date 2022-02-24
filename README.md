@@ -51,7 +51,7 @@
 JAVA
 * [Spring boot](https://spring.io/projects/spring-boot)  - Server 구축
 * [MYSQL](https://pymongo.readthedocs.io/en/stable/) - DB
-* [Spring Security] (https://spring.io/projects/spring-security) -로그인 및 로그아웃 처리
+* [Spring Security](https://spring.io/projects/spring-security) -로그인 및 로그아웃 처리
 
 
 JavaScript
